@@ -1,0 +1,52 @@
+import PyPDF2
+import re
+from PyPDF2 import PdfFileWriter,PdfFileReader
+
+
+file="MT202.pdf"
+# open the pdf file
+object = PyPDF2.PdfFileReader(file)
+
+# get number of pages
+NumPages = object.getNumPages()
+
+# define keyterms
+Start = "Message Identifier"
+End = "Confirmed Date"
+# extract text and do the search
+for i in range(0, NumPages):
+    PageObj = object.getPage(i)
+    print("this is page " + str(i)) 
+    abc = PageObj.extractText() 
+    # print(Text)
+    Start_page = re.search(Start, abc)
+    print(Start_page)
+    if(Start_page!='None'):
+        StartPageNo=i
+        #continue
+    end_page=re.search(End,abc)
+    print(end_page)
+    if(end_page!='None'):
+        endpageNO=i
+        
+    #file="MT700.pdf"
+    new_file_name = file.split(".")[0] + " " + "splitted.pdf"
+
+    read_file = PdfFileReader(open(file,"rb")) #read pdf
+    
+    new_pdf = PdfFileWriter() #create write object
+    StartPageNo-=1
+    try:
+        with open(new_file_name,"wb") as f:
+            for i in range(StartPageNo, endpageNO):
+              new_pdf.addPage(read_file.getPage(i))
+              new_pdf.write(f)
+              i+=1
+            print("PDF splitted Successfully")
+    except Exception as e:
+        print(e)
+    
+    
+    #End_page = re.search(End, abc)
+    print(Start_page)
+    #print(End_page)
